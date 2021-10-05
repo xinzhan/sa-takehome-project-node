@@ -1,3 +1,11 @@
+   /**
+   * xz todo notes:
+   * @todo : disable the HTTPS
+   * @todo : change hardcode to pull from env
+   * @todo : change the layout
+   * 
+   */
+  
 // get the config from server side
 async function getConfig() {
   try {
