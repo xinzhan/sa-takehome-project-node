@@ -63,8 +63,5 @@
 
   // Mount Stripe Card to UI div
   card.mount('#credit-card');
-  
-  //registerElements([card], 'credit-card');
-  //registerElements([card], 'payment-form'); 
 
 })();

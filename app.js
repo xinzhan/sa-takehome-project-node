@@ -60,8 +60,21 @@ app.get('/checkout', function(req, res) {
 /**
  * Success route
  */
-app.get('/success', function(req, res) {
-  res.render('success');
+app.post('/success', function(req, res) {
+  const { items } = req.body;
+
+  res.render('success', {
+    items: items
+  });
+
+  // // Create a PaymentIntent with the order amount and currency
+  // const paymentIntent = await stripe.paymentIntents.create({
+  //   amount: calculateOrderAmount(items),
+  //   currency: "usd"
+  // });
+  // res.send({
+  //   clientSecret: paymentIntent.client_secret
+  // });
 });
 
 /**
