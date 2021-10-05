@@ -65,6 +65,16 @@ app.get('/success', function(req, res) {
 });
 
 /**
+ * @author xz
+ * Expose the Stripe publishable key
+ */
+ app.get('/config', (req, res) => {
+  res.json({
+    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
+});
+
+/**
  * Start server
  */
 app.listen(3000, () => {
