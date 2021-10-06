@@ -1,26 +1,14 @@
 (async () => {
 
-  /**
-   * Clientside helper functions
-   */
-   $(document).ready(function() {
-      var amounts = document.getElementsByClassName("amount");
-      // iterate through all "amount" elements and convert from cents to dollars
-      for (var i = 0; i < amounts.length; i++) {
-        amount = amounts[i].getAttribute('data-amount') / 100;  
-        amounts[i].innerHTML = amount.toFixed(2);
-        console.log('amount.toFixed: ' + amount.toFixed(2));
-      }
-  });
-
-  /**
-   * Start of xz custom code
-   */
   // Get the config from server side
   const config = await getConfig();
 
   // Create a Stripe client.
   const stripe = Stripe(config.stripePublishableKey);
+
+  // // Get payment intent
+  // document.querySelector("button").disabled = true;
+
 
   // Config for Stripe Element
   var elements = stripe.elements({
@@ -34,7 +22,7 @@
     // use `locale: 'auto'` instead.
     locale: window.__exampleLocale
   });
-  
+
   // Create Stripe Card Element
   var card = elements.create('card', {
     iconStyle: 'solid',
@@ -46,7 +34,7 @@
         fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
         fontSize: '16px',
         fontSmoothing: 'antialiased',
-  
+
         ':-webkit-autofill': {
           color: '#fce883',
         },
@@ -63,5 +51,52 @@
 
   // Mount Stripe Card to UI div
   card.mount('#credit-card');
+
+  /**
+   * Clientside helper functions
+   */
+  $(document).ready(function () {
+    var amounts = document.getElementsByClassName("amount");
+    var amount = 0; // hack to pass the amount value, do not do this for PROD code
+
+    // iterate through all "amount" elements and convert from cents to dollars
+    for (var i = 0; i < amounts.length; i++) {
+      amount = amounts[i].getAttribute('data-amount') / 100;
+      amounts[i].innerHTML = amount.toFixed(2);
+    }
+
+    var intentBody = {
+      amt: amount
+    };
+
+    /**
+     * Warning: it is NOT a good idea to pass the acutal valude of $ here.
+     * Ideally should be items in shopping cart.
+     */
+    // Get the Payment Intent ClientSecret
+    fetch("/create-payment-intent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(intentBody)
+    })
+      .then(function (result) {
+        return result.json();
+      })
+      .then(function (data) {
+        console.log('clientSecret: ' + data.clientSecret);
+
+        // Put the event listener to pay
+        var form = document.getElementById("payment-form");
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          // Complete payment when the submit button is clicked
+          payWithCard(stripe, card, data.clientSecret);
+        });
+
+      });
+
+  });
 
 })();
