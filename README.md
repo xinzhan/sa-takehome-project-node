@@ -18,7 +18,7 @@ After getting the application to run locally, the first documentation read is fo
 
 Potential pitfalls:
 - Amount attributes for the APIs are denominated in **cents and not dollars**, and should be in Int and not Float.
-- Assuming that Charge ID can be retrived from the client-side [*stripe.confirmCardPayment*] success response
+- Assuming that Charge ID can be retrived from the client-side *stripe.confirmCardPayment* success response
 
 Other References:
 - [Stripe.js Documentation](https://stripe.com/docs/js)
