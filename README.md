@@ -44,4 +44,4 @@ Some possible improvements can be:
   3. Popular books by number sold (by genre/author)
   4. "Customers who bought this have also bought that"
  - Code Hygiene
-  1. Javascript error on home page and success due to missing credit card dom object
+   1. Javascript error on home page and success due to missing credit card dom object
