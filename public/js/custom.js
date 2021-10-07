@@ -6,10 +6,6 @@
   // Create a Stripe client.
   const stripe = Stripe(config.stripePublishableKey);
 
-  // // Get payment intent
-  // document.querySelector("button").disabled = true;
-
-
   // Config for Stripe Element
   var elements = stripe.elements({
     fonts: [
@@ -57,7 +53,6 @@
    */
   $(document).ready(function () {
     var amounts = document.getElementsByClassName("amount");
-    var amount = 0; // hack to pass the amount value, do not do this for PROD code
 
     // iterate through all "amount" elements and convert from cents to dollars
     for (var i = 0; i < amounts.length; i++) {
@@ -65,14 +60,14 @@
       amounts[i].innerHTML = amount.toFixed(2);
     }
 
+    // since we know there is only one item selected
+    // else will need to loop here to get all ids
+    const item = new URLSearchParams(window.location.search).get('item');
+
     var intentBody = {
-      amt: amount
+      items: [{ id: item }]
     };
 
-    /**
-     * Warning: it is NOT a good idea to pass the acutal valude of $ here.
-     * Ideally should be items in shopping cart.
-     */
     // Get the Payment Intent ClientSecret
     fetch("/create-payment-intent", {
       method: "POST",

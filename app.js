@@ -31,29 +31,13 @@ app.get('/checkout', function (req, res) {
   const item = req.query.item;
   let title, amount, error;
 
-  switch (item) {
-    case '1':
-      title = "The Art of Doing Science and Engineering"
-      amount = 2300
-      break;
-    case '2':
-      title = "The Making of Prince of Persia: Journals 1985-1993"
-      amount = 2500
-      break;
-    case '3':
-      title = "Working in Public: The Making and Maintenance of Open Source"
-      amount = 2800
-      break;
-    default:
-      // Included in layout view, feel free to assign error
-      error = "No item selected"
-      break;
-  }
+  // place switch statments into function for reuse
+  const book = getBookWithItemID(item);
 
   res.render('checkout', {
-    title: title,
-    amount: amount,
-    error: error
+    title: book.title,
+    amount: book.amount,
+    error: book.error
   });
 });
 
@@ -63,16 +47,19 @@ app.get('/checkout', function (req, res) {
 app.get('/success', async (req, res) => {
   const successID = req.query.id;
   const error = req.query.error;
-
-  var chargeID = '';
+  let chargeID, amt;
 
   if (successID) {
-    chargeID = await getChargeIDWithPaymentIntent(successID);
+    const paymentIntent = await stripe.paymentIntents.retrieve(successID);
+    // assuming only 1 charge, charge id is at => paymentIntent.charges.data[0].id;
+    chargeID = paymentIntent.charges.data[0].id;
+    amt = paymentIntent.charges.data[0].amount;
   }
 
   res.render('success', {
     successID: successID,
     chargeID: chargeID,
+    amt: (amt/100).toFixed(2),
     error: error
   });
 
@@ -91,15 +78,19 @@ app.get('/config', (req, res) => {
 /**
  * @author xz
  * Create Payment Intent
- * Do not pass the amount directly
  */
 app.post('/create-payment-intent', async (req, res) => {
 
-  const { amt } = req.body;
+  // get the item id
+  const {items} = req.body;
+  let amt;
+
+  // get book with item id, then the amt from book
+  amt = getBookWithItemID(items[0].id).amount;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: parseInt(amt) * 100,
+    amount: parseInt(amt),
     currency: "usd"
   });
 
@@ -119,14 +110,36 @@ app.listen(3000, () => {
   console.log('Getting served on port 3000');
 });
 
-
 /**
- * Get Charge ID from Payment Intent ID
+ * @author xz
+ * Get Book with Item ID
  */
-async function getChargeIDWithPaymentIntent(paymentIntentID) {
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentID);
-  // asuming only 1 charge, string is at => paymentIntent.charges.data[0].id;
-  // console.log('Charge ID: ' + paymentIntent.charges.data[0].id);
+ function getBookWithItemID(itemID) {
 
-  return paymentIntent.charges.data[0].id;
+  let title, amount, error;
+
+  switch (itemID) {
+    case '1':
+      title = "The Art of Doing Science and Engineering"
+      amount = 2300
+      break;
+    case '2':
+      title = "The Making of Prince of Persia: Journals 1985-1993"
+      amount = 2500
+      break;
+    case '3':
+      title = "Working in Public: The Making and Maintenance of Open Source"
+      amount = 2800
+      break;
+    default:
+      // Included in layout view, feel free to assign error
+      error = "No item selected"
+      break;
+  }
+ 
+  return {
+    amount: amount,
+    title: title,
+    error: error
+  };
 }

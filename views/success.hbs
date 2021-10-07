@@ -1,15 +1,26 @@
 <main>
-  <div class="mt-40 text-center text-success">
+  {{#if error}}
+  <div class="mt-40 text-center text-danger">
     <h1>
-      <i class="far fa-check-circle"></i> 
-      Success! <br />
-      Your Intent ID: <b>{{successID}}</b> <br />
-      Charge ID: <b>{{chargeID}}</b>
+      <i class="far fa-exclamation-circle"></i>
+      Error!
     </h1>
   </div>
-  <div class="mt-40 text-center">
-    <div class="mt-20 text-center text-secondary border-placeholder">
+  {{else}}
+  <div class="mt-40 text-center text-success">
+    <h1>
+      <i class="far fa-check-circle"></i>
+      Success!
+    </h1>
+  </div>
+  {{/if}}
 
+  <div class="mt-40 text-center">
+    {{#if error}}{{else}}
+    <div class="mt-20 text-center text-secondary border-placeholder">
+      The transaction amount of <b>${{amt}}</b> is successful<br />
+      Charge ID: <b>{{chargeID}}</b>
     </div>
+    {{/if}}
   </div>
 </main>
