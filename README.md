@@ -14,7 +14,7 @@ When the credit card is filled-in and form is submitted (i.e. Pay $xx is clicked
 Upon checkout completion, the success page is loaded with Payment Intent ID (pi_xx). The Payment Intent ID is required to get the Charge ID (ci_xx) and the amount charged via a server-side call to [*stripe.paymentIntents.retrieve*](https://stripe.com/docs/api/payment_intents/retrieve). The success page will then show the Charge ID and amount charged.
 
 ## Documentation, Samples and API References
-After getting the application to run locally, the first documentation read is for [Stripe Elements](https://stripe.com/docs/stripe-js) to understand how the frontend elements work and to add those in. [Stripe Elements Sample](https://github.com/stripe/elements-examples) is heavily referenced for both client0sdie and server-side coding when adding the payment method.
+After getting the application to run locally, the first documentation read is for [Stripe Elements](https://stripe.com/docs/stripe-js) to understand how the frontend elements work and to add those in. [Stripe Elements Sample](https://github.com/stripe/elements-examples) is heavily referenced for both client-side and server-side coding when adding the payment method. [PaymentsIntents API](https://stripe.com/docs/api/payment_intents) is referenced for the final part of this project (for success page).
 
 Potential pitfalls:
 - Amount attributes for the APIs are denominated in **cents and not dollars**, and should be in Int and not Float.
